@@ -2,338 +2,264 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новогодний Розыгрыш Скидок</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Christmas Lottery</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- Стили для TMA --- */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            color: #fff; 
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-            
-            background: linear-gradient(180deg, #191970 0%, #4B0082 70%, #8B0000 100%); 
-            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px), 
-                              radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 30px), 
-                              radial-gradient(white, rgba(255,255,255,.1) 3px, transparent 60px);
-            background-size: 500px 500px, 300px 300px, 600px 600px;
-            animation: snow1 15s linear infinite, snow2 20s linear infinite, snow3 25s linear infinite;
-        }
-        @keyframes snow1 { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 500px 500px, 300px 300px, 600px 600px; } }
-        @keyframes snow2 { from { background-position: 0 0, 0 0, 0 0; } to { background-position: -500px -500px, -300px -300px, -600px -600px; } }
-        @keyframes snow3 { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 250px 250px, 150px 150px, 300px 300px; } }
-
-        .container {
-            background: #ffffff; 
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            color: #333; 
-        }
-        h1 { color: #C0392B; margin-bottom: 10px; }
-        p.instruction { color: #6c757d; margin-bottom: 30px; }
-
-        /* СКРЕТЧ-КАРТА */
-        #scratch-card-container {
-            width: 300px;
-            height: 150px;
-            margin: 0 auto 30px;
-            background-color: #eee;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #008000; 
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        #scratch-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #8B0000; 
-            border-radius: 10px;
-            background-image: radial-gradient(circle at center, #E67E22 10%, #C0392B 100%);
-            background-size: 100% 100%; 
-            cursor: pointer;
-            opacity: 1; 
-            transition: opacity 0.1s linear; 
-        }
-        #scratch-layer.scratched-all {
-            opacity: 0 !important;
-            cursor: default;
-            transition: opacity 0.5s ease-out;
-        }
-
-        .result-area { 
-            display: none; 
-            margin-top: 25px; 
-            padding: 20px; 
-            border: 2px solid #008000; 
-            background-color: #e6ffe6; 
-            color: #155724; 
-            border-radius: 10px; 
-            text-align: center; 
-        }
-        .result-area p { 
-            font-size: 1.1em; 
-            font-weight: bold; 
-            color: #000; 
-            margin-top: 10px;
-        }
-
-        /* --- СТИЛИ ДЛЯ БЛОКА ПРОВЕРКИ ПОДПИСКИ --- */
-        #subscription-check {
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .action-button {
-            display: inline-block;
-            background-color: #007bff; 
+            overflow: hidden;
             color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.3s;
+            text-align: center;
         }
-        .action-button:hover {
-            background-color: #0056b3;
+
+        #app { display: none; width: 100%; position: relative; height: 100vh; flex-direction: column; justify-content: center; align-items: center; }
+        
+        #sub-screen {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.85); position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index: 100; padding: 20px; box-sizing: border-box;
         }
+
+        .sub-btn {
+            display: block; margin: 10px; padding: 15px 30px; border-radius: 15px;
+            text-decoration: none; font-weight: bold; border: none; cursor: pointer;
+            width: 80%; max-width: 300px;
+        }
+        .btn-link { background: #24A1DE; color: white; }
+        .btn-check { background: #ffd700; color: black; }
+
+        /* Анимации открытия */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes openGift {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; filter: blur(10px); }
+        }
+
+        .shake { animation: shake 0.2s ease-in-out; }
+        .open-anim { animation: openGift 0.6s forwards cubic-bezier(0.5, 0, 0.5, 1); }
+
+        #gift-btn { width: 180px; cursor: pointer; filter: drop-shadow(0 0 15px rgba(255,0,0,0.4)); margin-bottom: 20px; }
+
+        /* Экран результата с улучшенной анимацией */
+        #result-container {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); flex-direction: column; justify-content: center;
+            align-items: center; z-index: 300; backdrop-filter: blur(8px);
+        }
+
+        @keyframes prizeShow {
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+            50% { box-shadow: 0 0 50px rgba(255,215,0,0.6); }
+            100% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+        }
+
+        #prize-img { 
+            width: 80%; max-width: 350px; border-radius: 25px; 
+            animation: prizeShow 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            border: 3px solid rgba(255,215,0,0.3);
+            background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
+        }
+
+        .win-light {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 60%);
+            animation: glow 3s infinite; z-index: -1;
+        }
+
+        /* Остальные элементы */
+        .prizes-list-btn {
+            background: linear-gradient(45deg, #ffd700, #ffae00);
+            color: black; border: none; padding: 12px 25px; border-radius: 12px;
+            font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .footer-link {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; text-decoration: none;
+            color: white; background: rgba(0, 0, 0, 0.7);
+            padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px);
+            z-index: 400; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .promo-section { margin-top: 30px; width: 85%; max-width: 320px; z-index: 310; padding-bottom: 100px;}
+        .promo-input {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444;
+            background: #111; color: white; margin-bottom: 12px; text-align: center;
+        }
+        .promo-btn {
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            background: #28a745; color: white; font-weight: bold;
+        }
+
+        /* Сетка призов */
+        #prizes-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96); flex-direction: column; justify-content: center;
+            align-items: center; z-index: 500;
+        }
+        .prizes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 90%; }
+        .prizes-grid img { width: 100%; border-radius: 12px; }
+        .jackpot-item { grid-column: span 2; width: 70% !important; border: 2px solid #ffd700; align-self: center; margin-left: auto; margin-right: auto;}
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🎉 Новогодний Розыгрыш Скидок!</h1>
-    <p class="instruction" id="instruction-text">
-        Чтобы получить возможность стереть билет, сначала подпишитесь на наш канал.
-    </p>
+<div id="sub-screen">
+    <h2 style="margin-bottom: 25px;">Подпишись на канал,<br>чтобы крутить!</h2>
+    <a href="https://t.me/tokk1oTT" class="sub-btn btn-link">1. Перейти в канал</a>
+    <button class="sub-btn btn-check" onclick="checkSub()">2. Я подписался</button>
+</div>
 
-    <div id="subscription-check">
-        <p style="color: #333; margin-bottom: 15px;">
-            Для участия перейдите на канал **t.me/tokk1oTT** и подпишитесь.
-        </p>
-        <button id="open-channel-btn" class="action-button">
-            Открыть канал tokk1oTT
-        </button>
+<div id="app">
+    <div class="instructions" id="hint" style="font-size: 1.4rem;">Нажми на подарок 3 раза!</div>
+    <img src="gift.png" id="gift-btn" alt="Открыть">
+    <button class="prizes-list-btn" onclick="openPrizesModal()">Список всех призов</button>
+</div>
+
+<div id="prizes-modal">
+    <h3 style="color: #ffd700; margin-bottom: 20px;">Шанс выпадения</h3>
+    <div class="prizes-grid">
+        <img src="jackpot.png" class="jackpot-item">
+        <img src="5percent.png">
+        <img src="10percent.png">
+        <img src="15percent.png">
+        <img src="20percent.png">
+        <img src="30percent.png">
+        <img src="50percent.png">
     </div>
-    
-    <div id="scratch-card-container" style="display: none;"> 
-        <span id="prize-text"></span> 
-        <div id="scratch-layer"></div>
-    </div>
-    
-    <div id="result-area" class="result-area">
+    <button class="sub-btn btn-check" style="margin-top:30px; width:auto;" onclick="closePrizesModal()">Закрыть</button>
+</div>
+
+<div id="result-container">
+    <div class="win-light"></div>
+    <h2 id="win-text" style="color: #ffd700; font-size: 2rem; margin-bottom: 15px;">ПОЗДРАВЛЯЕМ!</h2>
+    <img src="" id="prize-img">
+    <div class="promo-section">
+        <p style="font-size: 0.9rem; color: #bbb; line-height: 1.4;">Чтобы забрать приз, напиши продавцу.<br>Для еще одной попытки введи код:</p>
+        <input type="text" id="promo-input" class="promo-input" placeholder="ПРОМОКОД">
+        <button class="promo-btn" onclick="usePromo()">АКТИВИРОВАТЬ КОД</button>
     </div>
 </div>
 
+<a href="https://t.me/tokk1o_pass" class="footer-link">
+    <img src="tg_logo.png" alt="TG">
+    <span>Купить PASS ROYALE</span>
+</a>
+
 <script>
-    const CHANNEL_URL = 'https://t.me/tokk1oTT';
-    const LOCAL_STORAGE_KEY = 'tokk1o_scratch_game_played'; // Ключ для LocalStorage
-    
-    // --- Элементы DOM ---
-    const SUBSCRIPTION_CHECK = document.getElementById('subscription-check');
-    const OPEN_CHANNEL_BTN = document.getElementById('open-channel-btn');
-    const SCRATCH_CARD_CONTAINER = document.getElementById('scratch-card-container');
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-    const SCRATCH_LAYER = document.getElementById('scratch-layer');
-    const PRIZE_TEXT_ELEM = document.getElementById('prize-text');
-    const RESULT_AREA = document.getElementById('result-area');
-    const INSTRUCTION = document.getElementById('instruction-text');
+    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "TOKK1ONEWYEAR", "PASS4000"];
+    const INFINITE_PROMO = "ELQDAR04";
 
-    // --- Константы игры ---
-    const PRIZE_WEIGHTS = [
-        { prize: "Скидка 30%", weight: 1000 }, 
-        { prize: "Скидка 20%", weight: 2500 }, 
-        { prize: "Скидка 15%", weight: 3000 }, 
-        { prize: "Скидка 10%", weight: 3500 }
+    const prizes = [
+        { img: '5percent.png', chance: 40 },
+        { img: '10percent.png', chance: 30 },
+        { img: '15percent.png', chance: 15 },
+        { img: '20percent.png', chance: 10 },
+        { img: '30percent.png', chance: 3.3 },
+        { img: '50percent.png', chance: 1.5 },
+        { img: 'jackpot.png', chance: 0.2 }
     ];
-    const TOTAL_WEIGHT = 10000;
-    const TIMER_DELAY = 4000; // 4 секунды
 
-    // --- Переменные состояния ---
-    let hasPlayed = false; // Состояние игры
-    let isScratching = false;
-    let finalPrize = "";
-    let timerStarted = false; 
-    let opacityValue = 1.0; 
-    const OPACITY_DECREASE = 0.05; 
-    
-    // --- 1. Функции LocalStorage ---
-    
-    // Проверяет, играл ли пользователь уже (на этом устройстве)
-    function checkIfPlayed() {
-        const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (storedData) {
-            hasPlayed = true;
-            // Возвращаем сохраненный приз
-            return JSON.parse(storedData).prize; 
-        }
-        return null;
+    window.onload = () => {
+        const savedPrize = localStorage.getItem('userPrize');
+        if (savedPrize) showFinalPrize(savedPrize, true);
+    };
+
+    function checkSub() {
+        document.getElementById('sub-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
     }
 
-    // Сохраняет результат игры
-    function setPlayedState(prize) {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ prize: prize, timestamp: Date.now() }));
-    }
+    function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
+    function closePrizesModal() { document.getElementById('prizes-modal').style.display = 'none'; }
 
-    // --- 2. Функции TMA и подписки ---
-    
-    function openChannel() {
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.openLink(CHANNEL_URL); 
-            
-            // Меняем интерфейс для следующего шага
-            INSTRUCTION.textContent = 'Подпишитесь и вернитесь. Нажмите "Продолжить", чтобы получить приз.';
-            OPEN_CHANNEL_BTN.textContent = 'Я подписался/лась (Продолжить)';
-            
-            // Меняем обработчик на функцию активации
-            OPEN_CHANNEL_BTN.removeEventListener('click', openChannel);
-            OPEN_CHANNEL_BTN.addEventListener('click', activateScratchCard);
+    let clicks = 0;
+    let isOpening = false;
+    const btn = document.getElementById('gift-btn');
 
+    btn.onclick = () => {
+        if(isOpening) return;
+        clicks++;
+        if (clicks < 3) {
+            btn.classList.add('shake');
+            setTimeout(() => btn.classList.remove('shake'), 200);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
         } else {
-            // Режим тестирования в браузере
-            window.open(CHANNEL_URL, '_blank');
-            activateScratchCard();
-        }
-    }
-
-    function activateScratchCard() {
-        SUBSCRIPTION_CHECK.style.display = 'none';
-        SCRATCH_CARD_CONTAINER.style.display = 'flex';
-        INSTRUCTION.textContent = 'Сотрите защитный слой, чтобы узнать, какую скидку вы выиграли!';
-        initializeGameLogic();
-    }
-
-    // --- 3. Логика игры (функции стирания и рандома) ---
-    
-    function getWeightedRandomPrize() {
-        const randomValue = Math.floor(Math.random() * TOTAL_WEIGHT) + 1;
-        let currentSum = 0;
-        for (const item of PRIZE_WEIGHTS) {
-            currentSum += item.weight;
-            if (randomValue <= currentSum) {
-                return item.prize;
-            }
-        }
-        return PRIZE_WEIGHTS[PRIZE_WEIGHTS.length - 1].prize;
-    }
-
-    function startScratching(e) {
-        e.preventDefault(); 
-        if (SCRATCH_LAYER.classList.contains('scratched-all')) return;
-
-        isScratching = true;
-
-        if (!timerStarted) {
-            timerStarted = true;
-            
-            setTimeout(() => {
-                if (!SCRATCH_LAYER.classList.contains('scratched-all')) {
-                    revealPrize();
-                }
-            }, TIMER_DELAY); 
-        }
-        scratch(e); 
-    }
-
-    function stopScratching() {
-        isScratching = false;
-    }
-
-    function scratch(e) {
-        if (!isScratching || SCRATCH_LAYER.classList.contains('scratched-all')) return;
-
-        opacityValue = Math.max(0, opacityValue - OPACITY_DECREASE);
-        SCRATCH_LAYER.style.opacity = opacityValue;
-        
-        if (opacityValue < 0.2) { 
-            revealPrize();
-        }
-    }
-
-    function revealPrize() {
-        SCRATCH_LAYER.classList.add('scratched-all'); 
-        
-        // Удаляем обработчики и сохраняем результат
-        SCRATCH_LAYER.removeEventListener('mousedown', startScratching);
-        SCRATCH_LAYER.removeEventListener('mousemove', scratch);
-        SCRATCH_LAYER.removeEventListener('mouseup', stopScratching);
-        SCRATCH_LAYER.removeEventListener('touchstart', startScratching);
-        SCRATCH_LAYER.removeEventListener('touchmove', scratch);
-        SCRATCH_LAYER.removeEventListener('touchend', stopScratching);
-
-        setPlayedState(finalPrize); // <--- Сохраняем результат
-        displayResult(finalPrize);
-    }
-
-    function displayResult(prize, isReplay = false) {
-        const headerText = isReplay ? `Ваш приз: ${prize} (Повторный показ)` : `🎁 Ваш приз: ${prize}!`;
-        const instructionText = 'Сделайте скрин скидки и покажите продавцу.';
-
-        RESULT_AREA.innerHTML = `
-            <h2>${headerText}</h2>
-            <p>${instructionText}</p>
-        `;
-        RESULT_AREA.style.display = 'block';
-        INSTRUCTION.textContent = isReplay ? 'Вы уже сыграли. Вот ваш предыдущий результат.' : 'Спасибо за игру! Ваша попытка использована.';
-    }
-
-    function initializeGameLogic() {
-        finalPrize = getWeightedRandomPrize();
-        PRIZE_TEXT_ELEM.textContent = finalPrize.toUpperCase();
-
-        SCRATCH_LAYER.addEventListener('mousedown', startScratching);
-        SCRATCH_LAYER.addEventListener('mousemove', scratch);
-        SCRATCH_LAYER.addEventListener('mouseup', stopScratching);
-        SCRATCH_LAYER.addEventListener('touchstart', startScratching);
-        SCRATCH_LAYER.addEventListener('touchmove', scratch);
-        SCRATCH_LAYER.addEventListener('touchend', stopScratching);
-        
-        document.addEventListener('mouseup', stopScratching);
-        document.addEventListener('touchend', stopScratching);
-    }
-
-    // --- 4. Основная инициализация ---
-    window.onload = function() {
-        if (window.Telegram && window.Telegram.WebApp) {
-             window.Telegram.WebApp.ready();
-        }
-        
-        const previousPrize = checkIfPlayed();
-        
-        if (previousPrize) {
-            // Пользователь уже играл, показываем результат
-            SUBSCRIPTION_CHECK.style.display = 'none';
-            SCRATCH_CARD_CONTAINER.style.display = 'none'; // Скрываем билет, чтобы не было искушения стирать
-            displayResult(previousPrize, true);
-        } else {
-            // Начинаем с проверки подписки
-            OPEN_CHANNEL_BTN.addEventListener('click', openChannel);
+            isOpening = true;
+            btn.classList.add('open-anim');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            setTimeout(() => drawPrize(), 600);
         }
     };
-</script>
 
+    function drawPrize() {
+        const random = Math.random() * 100;
+        let current = 0, winImg = '';
+        for (let p of prizes) {
+            current += p.chance;
+            if (random <= current) { winImg = p.img; break; }
+        }
+        localStorage.setItem('userPrize', winImg);
+        showFinalPrize(winImg);
+    }
+
+    function showFinalPrize(imgSrc, skipAnim = false) {
+        const img = document.getElementById('prize-img');
+        img.src = imgSrc;
+        if(skipAnim) img.style.animation = "none";
+        
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('sub-screen').style.display = 'none';
+        document.getElementById('prizes-modal').style.display = 'none';
+        document.getElementById('result-container').style.display = 'flex';
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function usePromo() {
+        const input = document.getElementById('promo-input').value.trim().toUpperCase();
+        if (input === INFINITE_PROMO) {
+            localStorage.removeItem('userPrize');
+            location.reload();
+            return;
+        }
+        let used = JSON.parse(localStorage.getItem('usedPromos') || "[]");
+        if (used.includes(input)) {
+            tg.showAlert("Этот код уже использован!");
+            return;
+        }
+        if (VALID_PROMOS.includes(input)) {
+            used.push(input);
+            localStorage.setItem('usedPromos', JSON.stringify(used));
+            localStorage.removeItem('userPrize');
+            location.reload();
+        } else {
+            tg.showAlert("Неверный промокод!");
+        }
+    }
+</script>
 </body>
 </html>
